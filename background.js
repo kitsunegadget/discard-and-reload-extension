@@ -53,7 +53,7 @@ function updateDiscardsCount(notify=false, discarded=0) {
         if (notify) {
             const notifyOption = {
                 type: "basic",
-                iconUrl: "icon.png",
+                iconUrl: "icon128.png",
                 title: "",
                 message: discarded.toString() + " tabs discarded\n" 
                     + "Now discarding " + discards.toString() + " of " + tabs.length,
