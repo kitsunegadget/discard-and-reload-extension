@@ -2,8 +2,8 @@
 chrome.browserAction.onClicked.addListener(() => {
     chrome.tabs.query({}, (tabs) => {
         async function waiting() {
-            return await Promise.all(tabs.map(async (tab) => {
-                return await new Promise((resolve) => {
+            return Promise.all(tabs.map(async (tab) => {
+                return new Promise((resolve) => {
                     if (tab.highlighted || tab.discarded) {
                         resolve("Skip");
                     } else {
@@ -48,7 +48,9 @@ function updateDiscardsCount(notify=false, discarded=0) {
         const discards = tabs.filter(tab => tab.discarded === true).length;
         //console.log(discards);
         chrome.browserAction.setBadgeText({ text: discards.toString() });
-        chrome.browserAction.setTitle({title: "Now discarding " + discards.toString() + " of " + tabs.length});
+        chrome.browserAction.setTitle({
+            title: "Now discarding " + discards.toString() + " of " + tabs.length
+        });
 
         if (notify) {
             const notifyOption = {
