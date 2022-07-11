@@ -33,9 +33,17 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // タブ切り替え時に更新
-chrome.tabs.onActivated.addListener(() => {
+chrome.tabs.onActivated.addListener((activeInfo) => {
   //console.log("tab actived fire");
   updateDiscardsCount();
+  updateBadges(activeInfo.tabId);
+});
+
+// タブ更新時に更新
+chrome.tabs.onUpdated.addListener((tabId, object, tab) => {
+  if (object.status === "complete") {
+    updateBadges(tabId);
+  }
 });
 
 // ウインドウを閉じた時に更新

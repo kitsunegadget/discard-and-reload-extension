@@ -16,5 +16,6 @@
     "default_icon": {},
     "default_title": "非表示タブのメモリを開放します（作業ページがある場合は先に表示しておいてください）"
   },
-  "permissions": ["activeTab", "notifications"]
+  "permissions": ["activeTab", "notifications", "scripting", "alarms"],
+  "host_permissions": ["<all_urls>"]
 }
