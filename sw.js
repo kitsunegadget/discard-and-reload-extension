@@ -147,3 +147,22 @@ function addSIunit(num) {
     return `${unitPoint(text, unitMod)}G`;
   }
 }
+
+chrome.alarms.create({
+  delayInMinutes: 0,
+  periodInMinutes: 1,
+});
+
+chrome.alarms.onAlarm.addListener(() => {
+  chrome.windows.getAll({ populate: true }).then((windows) => {
+    const normalWindows = windows.filter((w) => w.state === "normal");
+
+    normalWindows.forEach((window) => {
+      window.tabs.forEach((tab) => {
+        if (tab.active === true) {
+          updateBadges(tab.id);
+        }
+      });
+    });
+  });
+});
