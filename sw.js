@@ -1,31 +1,43 @@
+/**
+ * バッジテキストの更新
+ * @param {number} tabId
+ */
 async function updateBadges(tabId) {
   const tab = await chrome.tabs.get(tabId);
   if (!tab.url) return;
 
-  const heapSize = await getTotalJSHeapSize(tab.id);
+  const heapSize = await getJSHeapSize(tab.id);
 
   chrome.action.setBadgeText({
     text: addSIunit(heapSize),
     tabId: tab.id,
   });
 
-  chrome.action.setTitle({
-    title: `Total JS heap size: ${heapSize} bytes`,
-    tabId: tab.id,
-  });
+  // chrome.action.setTitle({
+  //   title: `Total JS heap size: ${heapSize} bytes`,
+  //   tabId: tab.id,
+  // });
 }
 
-async function getTotalJSHeapSize(tabId) {
-  const results = await chrome.scripting.executeScript({
+/**
+ * 指定タブのJSヒープサイズを取得
+ * @param {number} tabId
+ * @returns {Promise<number>} JSヒープサイズ(Byte)。取得できなかった場合は-1を返します。
+ */
+async function getJSHeapSize(tabId) {
+  const [injectionResult] = await chrome.scripting.executeScript({
     target: { tabId: tabId },
     func: () => {
-      return performance.memory.totalJSHeapSize;
+      return performance.memory.usedJSHeapSize;
     },
   });
 
-  for (const frameResult of results) {
-    console.log(frameResult);
-    return frameResult.result;
+  console.log(injectionResult);
+
+  if (injectionResult) {
+    return injectionResult.result;
+  } else {
+    return -1;
   }
 }
 
