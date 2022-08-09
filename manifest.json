@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Chrome manual discard",
-  "version": "1.4",
-  "description": "表示していないタブのメモリを手動で開放します.",
+  "name": "Discard and Reload Extension",
+  "version": "2.0",
+  "description": "表示しているタブを discard して再読み込みします。",
   "icons": {
     "16": "icon128.png",
     "48": "icon128.png",
@@ -14,7 +14,7 @@
   },
   "action": {
     "default_icon": {},
-    "default_title": "非表示タブのメモリを開放します（作業ページがある場合は先に表示しておいてください）"
+    "default_title": "現在のタブを discard して再読み込みします"
   },
   "permissions": ["activeTab", "notifications", "scripting", "alarms"],
   "host_permissions": ["<all_urls>"]
