@@ -69,15 +69,14 @@ function addSIunit(num) {
 //| Chrome extension events |
 //|-------------------------|
 
-// 拡張機能ロード時に更新
-chrome.runtime.onInstalled.addListener(() => {
-  updateDiscardsCount();
+// ブラウザーアクションでのイベント発火
+chrome.action.onClicked.addListener(async (activeTab) => {
+  const discardedTab = await chrome.tabs.discard(activeTab.id);
+  chrome.tabs.reload(discardedTab.id);
 });
 
 // タブ切り替え時に更新
 chrome.tabs.onActivated.addListener((activeInfo) => {
-  //console.log("tab actived fire");
-  updateDiscardsCount();
   updateBadges(activeInfo.tabId);
 });
 
@@ -88,10 +87,14 @@ chrome.tabs.onUpdated.addListener((tabId, object, tab) => {
   }
 });
 
-// ウインドウを閉じた時に更新
-chrome.windows.onRemoved.addListener(() => {
-  //console.log("windows removed fire");
-  updateDiscardsCount();
+// ウインドウのフォーカスが変更されたときに更新
+chrome.windows.onFocusChanged.addListener(async (windowId) => {
+  const [tab] = await chrome.tabs.query({
+    windowId: windowId,
+    active: true,
+  });
+
+  if (tab) updateBadges(tab.id);
 });
 
 // アラームの作成
