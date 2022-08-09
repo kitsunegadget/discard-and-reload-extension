@@ -41,6 +41,11 @@ async function getJSHeapSize(tabId) {
   }
 }
 
+/**
+ * 数値を単位で省略
+ * @param {*} num
+ * @returns
+ */
 function addSIunit(num) {
   let text = "";
   if (typeof num === "number") {
@@ -53,10 +58,17 @@ function addSIunit(num) {
 
   const unitMod = text.length % 3;
 
+  /**
+   * 数値を先頭文字のみにスライス
+   * @param {*} t
+   * @param {*} mod
+   * @returns
+   */
   const unitPoint = (t, mod) => {
+    // バッジテキストは4文字までなので、単位を除いて3文字以下にする
     switch (mod) {
       case 1:
-        return `${t.slice(0, 1)}.${t.slice(1, 3)}`;
+        return `${t.slice(0, 1)}.${t.slice(1, 2)}`;
       case 2:
         return `${t.slice(0, 2)}`;
       case 0:
@@ -75,6 +87,8 @@ function addSIunit(num) {
   } else if (text.length <= 12) {
     return `${unitPoint(text, unitMod)}G`;
   }
+
+  return "";
 }
 
 //|-------------------------|
