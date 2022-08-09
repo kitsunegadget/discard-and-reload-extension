@@ -148,21 +148,22 @@ function addSIunit(num) {
   }
 }
 
+// アラームの作成
 chrome.alarms.create({
   delayInMinutes: 0,
   periodInMinutes: 1,
 });
 
-chrome.alarms.onAlarm.addListener(() => {
-  chrome.windows.getAll({ populate: true }).then((windows) => {
-    const normalWindows = windows.filter((w) => w.state === "normal");
+// アラームイベント
+chrome.alarms.onAlarm.addListener(async () => {
+  const windows = await chrome.windows.getAll({ populate: true });
+  const normalWindows = windows.filter((w) => w.state === "normal");
 
-    normalWindows.forEach((window) => {
-      window.tabs.forEach((tab) => {
-        if (tab.active === true) {
-          updateBadges(tab.id);
-        }
-      });
+  normalWindows.forEach((window) => {
+    window.tabs.forEach((tab) => {
+      if (tab.active === true && tab.status === "complete") {
+        updateBadges(tab.id);
+      }
     });
   });
 });
