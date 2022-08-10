@@ -4,13 +4,15 @@
  */
 async function updateBadges(tabId) {
   const tab = await chrome.tabs.get(tabId);
-  if (!tab.url) return;
+  if (tab.url == null) {
+    return;
+  }
 
-  const heapSize = await getJSHeapSize(tab.id);
+  const heapSize = await getJSHeapSize(tabId);
 
   chrome.action.setBadgeText({
     text: addSIunit(heapSize),
-    tabId: tab.id,
+    tabId: tabId,
   });
 
   // chrome.action.setTitle({
@@ -91,9 +93,9 @@ function addSIunit(num) {
   return "";
 }
 
-//|-------------------------|
-//| Chrome extension events |
-//|-------------------------|
+//     |-------------------------|
+//-----| Chrome extension events |-----
+//     |-------------------------|
 
 // ブラウザーアクションでのイベント発火
 chrome.action.onClicked.addListener(async (activeTab) => {
@@ -120,7 +122,11 @@ chrome.windows.onFocusChanged.addListener(async (windowId) => {
     active: true,
   });
 
-  if (tab) updateBadges(tab.id);
+  // フォーカスにアクセスできない場合、最初のタブが変更される場合があるため
+  // completeのタブか確認する
+  if (tab.status === "complete") {
+    updateBadges(tab.id);
+  }
 });
 
 // アラームの作成
