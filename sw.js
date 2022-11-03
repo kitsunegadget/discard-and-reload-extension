@@ -125,14 +125,17 @@ chrome.tabs.onUpdated.addListener((tabId, object, tab) => {
 
 // ウインドウのフォーカスが変更されたときに更新
 chrome.windows.onFocusChanged.addListener(async (windowId) => {
+  // フォーカスにアクセスできない場合、WINDOW_ID_NONE (-1)　が送られる。
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    return;
+  }
+
   const [tab] = await chrome.tabs.query({
     windowId: windowId,
     active: true,
   });
 
-  // フォーカスにアクセスできない場合、最初のタブが変更される場合があるため
-  // completeのタブか確認する
-  if (tab.status === "complete") {
+  if (tab && tab.status === "complete") {
     updateBadges(tab.id);
   }
 });
