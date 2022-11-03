@@ -3,7 +3,11 @@
  * @param {number} tabId
  */
 async function updateBadges(tabId) {
-  const tab = await chrome.tabs.get(tabId);
+  const tab = await chrome.tabs.get(tabId).catch((error) => {
+    throw new Error(`${error.message} Could not get a tab.`);
+  });
+
+  // chromeスキームはtabにurlプロパティが無く利用できない
   if (tab.url == null) {
     return;
   }
@@ -27,12 +31,16 @@ async function updateBadges(tabId) {
  * @returns {Promise<number>} JSヒープサイズ(Byte)。取得できなかった場合は-1を返します。
  */
 async function getJSHeapSize(tabId) {
-  const [injectionResult] = await chrome.scripting.executeScript({
-    target: { tabId: tabId },
-    func: () => {
-      return performance.memory.usedJSHeapSize;
-    },
-  });
+  const [injectionResult] = await chrome.scripting
+    .executeScript({
+      target: { tabId: tabId },
+      func: () => {
+        return performance.memory.usedJSHeapSize;
+      },
+    })
+    .catch((error) => {
+      throw new Error(`${error.message} Could not execute script.`);
+    });
 
   console.log(injectionResult);
 
@@ -55,7 +63,7 @@ function addSIunit(num) {
   } else if (typeof num === "string") {
     text = num;
   } else {
-    throw new TypeError("num is not a number or string");
+    throw new TypeError(`num is not a number or string. num_status: ${num}`);
   }
 
   const unitMod = text.length % 3;
